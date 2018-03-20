@@ -1,6 +1,6 @@
 using PyPlot
 
-# test COMMENT
+# test COMMEN
 
 N = 100
 x = zeros(N+1)
