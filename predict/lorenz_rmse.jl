@@ -1,0 +1,53 @@
+using SigmoidNumbers
+using JLD
+
+cd("/home/kloewer/julia/lorenz_posit/predict/")
+include("lorenz_integration_posits.jl")
+
+# create initial conditions
+Nlong = 10000
+Δt = 0.01
+
+σ,ρ,β = 10.,28.,8./3.
+s = 1.
+
+# start somewhere
+XYZ0 = time_integration(Nlong,Float64,[.5,.5,15.],σ,ρ,β,s,Δt)
+
+##
+N = 3000
+time = 0:Δt:(N*Δt)
+M = 1000    # number of independent forecasts, one from M different start dates
+
+es = [1,2,3]    # number of exponent bits for posits
+nes = length(es)
+
+# preallocate
+RMSE_float = Array{Float64}(M,N+1)
+RMSE_posit = Array{Float64}(nes,M,N+1)
+
+rpf = Float32   # float environment (rpf: reduced precision float)
+
+for j = 1:M
+    # pick a random start
+    randi = rand(Int(Nlong/2):Nlong)
+    xyz0 = XYZ0[:,randi]
+
+    # truth
+    xyz_true = time_integration(N,Float64,xyz0,σ,ρ,β,s,Δt)
+
+    # single/half precision
+    xyz_rpf = time_integration(N,rpf,xyz0,σ,ρ,β,s,Δt)
+    RMSE_float[j,:] = sqrt.(sum((xyz_rpf-xyz_true).^2,1))
+
+    for ip = 1:nes
+        # posit
+        P = Posit{32,es[ip]}
+        xyz_p = time_integration(N,P,xyz0,σ,ρ,β,s,Δt)
+
+        # calculate RMSE
+        RMSE_posit[ip,j,:] = sqrt.(sum((xyz_p-xyz_true).^2,1))
+    end
+end
+
+save("data/RMSE_32bit_s-10.jld","RMSE_F",RMSE_float,"RMSE_P",RMSE_posit)
