@@ -10,5 +10,6 @@ N = 100000
 σ,ρ,β = 10.,28.,8./3.
 
 # start somewhere - last argument is the scale
-xyz = time_integration(N,[.5,.5,15.],σ,ρ,β,Δt,1/100.)
+s = 1/100.
+xyz = time_integration(N,[.5,.5,15.],σ,ρ,β,Δt,s)
 save("data/lorenz_scale-100.jld","xyz",xyz)
