@@ -14,8 +14,8 @@ pebits = 1
 
 flist = representable_floats(nbits,febits)
 plist = representable_posits(nbits,pebits)
-ilist = 1:(2^(nbits-1)-1)
-ilist = [1,2,2^(nbits-1)-2,2^(nbits-1)-1]
+#ilist = 1:(2^(nbits-1)-1)
+ilist = [1,2^(nbits-1)-2,2^(nbits-1)-1]
 
 # arithmetic mean between all representable numbers
 f_am = (flist[1:end-1]+flist[2:end])/2.

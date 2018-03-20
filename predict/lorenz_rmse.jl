@@ -15,26 +15,26 @@ s = 1.
 XYZ0 = time_integration(Nlong,Float64,[.5,.5,15.],σ,ρ,β,s,Δt)
 
 ##
-N = 3000
+N = 1000
 time = 0:Δt:(N*Δt)
 M = 1000    # number of independent forecasts, one from M different start dates
 
-es = [1,2,3]    # number of exponent bits for posits
+es = [0,1,2]    # number of exponent bits for posits
 nes = length(es)
 
 # preallocate
 RMSE_float = Array{Float64}(M,N+1)
 RMSE_posit = Array{Float64}(nes,M,N+1)
 
-rpf = Float32   # float environment (rpf: reduced precision float)
+rpf = Float16   # float environment (rpf: reduced precision float)
 
 for j = 1:M
     # pick a random start
     randi = rand(Int(Nlong/2):Nlong)
     xyz0 = XYZ0[:,randi]
 
-    # truth
-    xyz_true = time_integration(N,Float64,xyz0,σ,ρ,β,s,Δt)
+    # truth without scaling
+    xyz_true = time_integration(N,Float64,xyz0,σ,ρ,β,1.,Δt)
 
     # single/half precision
     xyz_rpf = time_integration(N,rpf,xyz0,σ,ρ,β,s,Δt)
@@ -42,7 +42,7 @@ for j = 1:M
 
     for ip = 1:nes
         # posit
-        P = Posit{32,es[ip]}
+        P = Posit{16,es[ip]}
         xyz_p = time_integration(N,P,xyz0,σ,ρ,β,s,Δt)
 
         # calculate RMSE
@@ -50,4 +50,4 @@ for j = 1:M
     end
 end
 
-save("data/RMSE_32bit_s-10.jld","RMSE_F",RMSE_float,"RMSE_P",RMSE_posit)
+save("data/RMSE_16bit_s1.jld","RMSE_F",RMSE_float,"RMSE_P",RMSE_posit)
