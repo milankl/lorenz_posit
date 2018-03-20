@@ -1,5 +1,7 @@
 using PyPlot
 
+# test COMMENT
+
 N = 100
 x = zeros(N+1)
 x2 = Array{UInt8}(N+1)
