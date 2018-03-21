@@ -11,11 +11,11 @@ fig,(ax1,ax2) = subplots(2,1,figsize=(9,9),sharex=true)
 
 # 16BIT VERSION
 
-DAT1 = load("data/RMSE_16bit_s-10.jld")
-DAT2 = load("data/RMSE_16bit_s1.jld")
-DAT3 = load("data/RMSE_16bit_s10.jld")
+DAT1 = load("data/RMSE_16bit_s10.0.jld")
+DAT2 = load("data/RMSE_16bit_s1.0.jld")
+DAT3 = load("data/RMSE_16bit_s0.1.jld")
 
-d = 400
+d = 360
 
 for (iD,D) in enumerate([DAT1,DAT2,DAT3])
 
@@ -25,8 +25,8 @@ for (iD,D) in enumerate([DAT1,DAT2,DAT3])
     perct = [10,25,50,75,90]
 
     for (ip,p) in enumerate(perct)
-        F[ip] = np.percentile(D["RMSE_F"][:,d]/er[iD],p)
-        P[:,ip] = np.percentile(D["RMSE_P"][:,:,d]/er[iD],p,axis=1)
+        F[ip] = np.percentile(D["RMSE_F"][:,d]/er[2],p)
+        P[:,ip] = np.percentile(D["RMSE_P"][:,:,d]/er[2],p,axis=1)
     end
 
     F[6] = mean(D["RMSE_F"][:,d])
@@ -43,9 +43,9 @@ end
 
 # 32BIT VERSION
 
-DAT1 = load("data/RMSE_32bit_s-10.jld")
-DAT2 = load("data/RMSE_32bit_s1.jld")
-DAT3 = load("data/RMSE_32bit_s10.jld")
+DAT1 = load("data/RMSE_32bit_s10.0.jld")
+DAT2 = load("data/RMSE_32bit_s1.0.jld")
+DAT3 = load("data/RMSE_32bit_s0.1.jld")
 
 d = 1400
 
@@ -57,8 +57,8 @@ for (iD,D) in enumerate([DAT1,DAT2,DAT3])
     perct = [10,25,50,75,90]
 
     for (ip,p) in enumerate(perct)
-        F[ip] = np.percentile(D["RMSE_F"][:,d]/er[iD],p)
-        P[:,ip] = np.percentile(D["RMSE_P"][:,:,d]/er[iD],p,axis=1)
+        F[ip] = np.percentile(D["RMSE_F"][:,d]/er[2],p)
+        P[:,ip] = np.percentile(D["RMSE_P"][:,:,d]/er[2],p,axis=1)
     end
 
     F[6] = mean(D["RMSE_F"][:,d])
@@ -87,7 +87,7 @@ ax1[:set_yticklabels](["Posit(16,2)","Posit(16,1)","Posit(16,0)","Float(16,5)"])
 ax2[:set_yticks]([2,5,8,11])
 ax2[:set_yticklabels](["Posit(32,3)","Posit(32,2)","Posit(32,1)","Float(32,8)"])
 
-ax1[:set_xlim](-.1,1.6)
+ax1[:set_xlim](0,1.6)
 ax2[:set_xticks](0:0.25:1.5)
 
 tight_layout()

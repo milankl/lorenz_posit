@@ -90,11 +90,11 @@ ax2[:set_xscale]("log",basex=10)
 ax2[:set_xlim](ax1[:get_xlim]())
 ax2[:set_xticks](xtik)
 
-ax2[:plot](bins[1:end-1],H100,label=L"s=10^2",drawstyle="steps-post")
-#ax2[:plot](bins[1:end-1],H10,label=L"s=10^1",drawstyle="steps-post")
+# ax2[:plot](bins[1:end-1],H100,label=L"s=10^2",drawstyle="steps-post")
+ax2[:plot](bins[1:end-1],H10,label=L"s=10^1",drawstyle="steps-post")
 ax2[:plot](bins[1:end-1],H1,label=L"s=10^0",drawstyle="steps-post")
-#ax2[:plot](bins[1:end-1],H_10,label=L"s=10^{-1}",drawstyle="steps-post")
-ax2[:plot](bins[1:end-1],H_100,label=L"s=10^{-2}",drawstyle="steps-post")
+ax2[:plot](bins[1:end-1],H_10,label=L"s=10^{-1}",drawstyle="steps-post")
+# ax2[:plot](bins[1:end-1],H_100,label=L"s=10^{-2}",drawstyle="steps-post")
 
 
 ax2[:set_title]("Numbers subject to rounding errors in rescaled Lorenz 63")
