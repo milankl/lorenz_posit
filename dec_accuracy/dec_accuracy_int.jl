@@ -5,8 +5,8 @@ include("repr_numbers.jl")
 
 nbits = 16
 febits = 5
-pebits = 1
-rs = 0.05
+pebits = 0
+rs = 1
 
 flist = representable_floats(nbits,febits)
 plist = representable_posits(nbits,pebits)

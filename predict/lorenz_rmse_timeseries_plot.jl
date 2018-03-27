@@ -9,14 +9,14 @@ er = load("data/mean_error.jld")["meanerror"][2]
 
 fig,axs = subplots(3,1,figsize=(9,9),sharex=true,sharey=true)
 
-DAT1 = load("data/RMSE_32bit_s1000.0.jld")
+DAT1 = load("data/RMSE_32bit_s10.0.jld")
 DAT2 = load("data/RMSE_32bit_s1.0.jld")
-DAT3 = load("data/RMSE_32bit_s0.001.jld")
+DAT3 = load("data/RMSE_32bit_s0.1.jld")
 
 N = size(DAT1["RMSE_F"])[2]
 Δt = 0.01
 time = 0:Δt:(N-1)*Δt
-tmax=25
+tmax = 25
 
 for (iD,D) in enumerate([DAT1,DAT2,DAT3])
 

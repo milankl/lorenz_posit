@@ -9,15 +9,16 @@ Nlong = 10000
 Δt = 0.01
 
 σ,ρ,β = 10.,28.,8./3.
-s = 1/1000.
+s = 1000.
+nbit = 16
 
 # start somewhere
 XYZ0 = time_integration(Nlong,Float64,[.5,.5,15.],σ,ρ,β,1.,Δt)
 
-##
-N = 3000
+#
+N = 1000
 time = 0:Δt:(N*Δt)
-M = 1000    # number of independent forecasts, one from M different start dates
+M = 100    # number of independent forecasts, one from M different start dates
 
 es = [1,2,3]    # number of exponent bits for posits
 nes = length(es)
@@ -26,7 +27,11 @@ nes = length(es)
 RMSE_float = Array{Float64}(M,N+1)
 RMSE_posit = Array{Float64}(nes,M,N+1)
 
-rpf = Float32   # float environment (rpf: reduced precision float)
+if nbit == 16
+    rpf = Float16   # float environment (rpf: reduced precision float)
+elseif nbit == 32
+    rpf = Float32
+end
 
 println("Computing RMSE for s=$s")
 for j = 1:M
@@ -49,7 +54,7 @@ for j = 1:M
 
     for ip = 1:nes
         # posit
-        P = Posit{32,es[ip]}
+        P = Posit{nbit,es[ip]}
         xyz_p = time_integration(N,P,xyz0,σ,ρ,β,s,Δt)
 
         # calculate RMSE
@@ -57,5 +62,5 @@ for j = 1:M
     end
 end
 
-save("data/RMSE_32bit_s$s.jld","RMSE_F",RMSE_float,"RMSE_P",RMSE_posit)
-println("Data stored for s=$s")
+save("data/RMSE_$(nbit)bit_s$s.jld","RMSE_F",RMSE_float,"RMSE_P",RMSE_posit)
+println("Data stored for s=$s,n=$nbit")
