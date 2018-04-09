@@ -159,3 +159,11 @@ function wc_dec_acc_float(nbits,ebits)
 
     return f_am,f_wda
 end
+
+function wc_dec_acc_int(nbits)
+
+    i_am = [1.,2.,2^(nbits-1)-1,2^(nbits-1)-1]
+    i_wda = [0.,-log10(abs(log10(2))),-log10(abs(log10((2^(nbits-1)-1)/(2^(nbits-1)-2)))),0]
+
+    return i_am,i_wda
+end
