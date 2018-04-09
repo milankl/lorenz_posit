@@ -11,13 +11,13 @@ fig,(ax1,ax2) = subplots(2,1,figsize=(9,9),sharex=true,sharey=true)
 
 # 16BIT VERSION
 
-DAT1 = load("data/RMSE_16bit_s1000.0.jld")
-DAT2 = load("data/RMSE_16bit_s100.0.jld")
-DAT3 = load("data/RMSE_16bit_s10.0.jld")
+DAT7 = load("data/RMSE_16bit_s1000.0.jld")
+DAT6 = load("data/RMSE_16bit_s100.0.jld")
+DAT5 = load("data/RMSE_16bit_s10.0.jld")
 DAT4 = load("data/RMSE_16bit_s1.0.jld")
-DAT5 = load("data/RMSE_16bit_s0.1.jld")
-DAT6 = load("data/RMSE_16bit_s0.01.jld")
-DAT7 = load("data/RMSE_16bit_s0.001.jld")
+DAT3 = load("data/RMSE_16bit_s0.1.jld")
+DAT2 = load("data/RMSE_16bit_s0.01.jld")
+DAT1 = load("data/RMSE_16bit_s0.001.jld")
 
 d = 450
 δ16 = 0.05     #shift
@@ -58,15 +58,15 @@ ax1[:set_title]("Forecast Error in Lorenz 63, at 16bit, t=$(d/100)",loc="right")
 
 # 32BIT VERSION
 
-DAT1 = load("data/RMSE_32bit_s10000.0.jld")
-DAT2 = load("data/RMSE_32bit_s1000.0.jld")
-DAT3 = load("data/RMSE_32bit_s100.0.jld")
-DAT4 = load("data/RMSE_32bit_s10.0.jld")
+DAT9 = load("data/RMSE_32bit_s10000.0.jld")
+DAT8 = load("data/RMSE_32bit_s1000.0.jld")
+DAT7 = load("data/RMSE_32bit_s100.0.jld")
+DAT6 = load("data/RMSE_32bit_s10.0.jld")
 DAT5 = load("data/RMSE_32bit_s1.0.jld")
-DAT6 = load("data/RMSE_32bit_s0.1.jld")
-DAT7 = load("data/RMSE_32bit_s0.01.jld")
-DAT8 = load("data/RMSE_32bit_s0.001.jld")
-DAT9 = load("data/RMSE_32bit_s0.0001.jld")
+DAT4 = load("data/RMSE_32bit_s0.1.jld")
+DAT3 = load("data/RMSE_32bit_s0.01.jld")
+DAT2 = load("data/RMSE_32bit_s0.001.jld")
+DAT1 = load("data/RMSE_32bit_s0.0001.jld")
 
 d = 1550
 δ32 = 0.1     #shift
@@ -114,6 +114,30 @@ for i in [1,2,3]
     ax2[:plot]((-2:length(FF32)-3)-δ32+0.05*i,PP32[:,i],"C"*"$i")
 end
 
+# 32 BIT INTEGERS
+DATi3 = load("data/RMSE_32bit_int_s10000.0.jld")
+DATi2 = load("data/RMSE_32bit_int_s1000.0.jld")
+DATi1 = load("data/RMSE_32bit_int_s100.0.jld")
+
+I32 = zeros(3)
+
+for (iD,D) in enumerate([DATi1,DATi2,DATi3])
+
+    I = zeros(6)
+    perct = [10,25,50,75,90]
+
+    for (ip,p) in enumerate(perct)
+        I[ip] = np.percentile(D["RMSE_I"][:,d]/er[2],p)
+    end
+
+    # store for accessing outside loop
+    I32[iD] = I[3]
+
+    x = iD+2+δ32
+    ax2[:plot](x,I[3],"C0^")
+    #ax2[:plot](ones(2)*x,[I[2],I[4]],"CO",alpha=.3,lw=2)
+end
+
 
 ax1[:add_patch](pat.Rectangle([-4,1],15,2,color="k",alpha=.2))
 ax2[:add_patch](pat.Rectangle([-4,1],15,2,color="k",alpha=.2))
@@ -128,7 +152,7 @@ ax2[:set_xlim](-2.5,6.5)
 
 ax1[:set_xticks](-2:6)
 ax2[:set_xticks](-2:6)
-ax2[:set_xticklabels]([L"×10^4",L"×10^3",L"×10^2",L"×10^1",L"×1",L"×10^{-1}",L"×10^{-2}",L"×10^{-3}",L"×10^{-4}"])
+ax2[:set_xticklabels]([L"×10^4",L"×10^3",L"×10^2",L"×10^1",L"×1",L"×10^{-1}",L"×10^{-2}",L"×10^{-3}",L"×10^{-4}"][end:-1:1])
 ax2[:set_xlabel]("Scaling")
 
 # LEGEND
@@ -143,6 +167,7 @@ ax2[:plot](0,-1,"k",label="Float(32,8)")
 ax2[:plot](0,-1,"C1",label="Posit(32,1)")
 ax2[:plot](0,-1,"C2",label="Posit(32,2)")
 ax2[:plot](0,-1,"C3",label="Posit(32,3)")
+ax2[:plot](0,-1,"C0",label="Int32")
 
 ax2[:legend](loc=9)
 
