@@ -18,7 +18,7 @@ XYZ0 = time_integration(Nlong,Float64,[.5,.5,15.],σ,ρ,β,1.,Δt)
 #
 N = 1000
 time = 0:Δt:(N*Δt)
-M = 100    # number of independent forecasts, one from M different start dates
+M = 500    # number of independent forecasts, one from M different start dates
 
 es = [1,2,3]    # number of exponent bits for posits
 nes = length(es)

@@ -9,16 +9,16 @@ Nlong = 10000
 Δt = 0.01
 
 σ,ρ,β = 10.,28.,8./3.
-s = 10000.
-nbit = 32
+s = 700.
+nbit = 16
 
 # start somewhere
 XYZ0 = time_integration(Nlong,Float64,[.5,.5,15.],σ,ρ,β,1.,Δt)
 
 #
-N = 3000
+N = 1000
 time = 0:Δt:(N*Δt)
-M = 1000    # number of independent forecasts, one from M different start dates
+M = 500    # number of independent forecasts, one from M different start dates
 
 # preallocate
 RMSE_int = zeros(M,N+1)

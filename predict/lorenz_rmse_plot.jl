@@ -43,7 +43,7 @@ for (iD,D) in enumerate([DAT1,DAT2,DAT3,DAT4,DAT5,DAT6,DAT7])
     # store for accessing outside loop
     FF16[iD],PP16[iD,:] = F[3],P[:,3]
 
-    x = iD-δ16-2
+    x = iD-2*δ16-2
     ax1[:plot](x,F[3],"ko")
     ax1[:plot](ones(2)*x,[F[2],F[4]],"k",alpha=.3,lw=2)
 
@@ -55,6 +55,33 @@ for (iD,D) in enumerate([DAT1,DAT2,DAT3,DAT4,DAT5,DAT6,DAT7])
 end
 
 ax1[:set_title]("Forecast Error in Lorenz 63, at 16bit, t=$(d/100)",loc="right")
+
+# 16 BIT INTEGERS
+DATi4 = load("data/RMSE_16bit_int_s700.0.jld")
+DATi3 = load("data/RMSE_16bit_int_s100.0.jld")
+DATi2 = load("data/RMSE_16bit_int_s10.0.jld")
+DATi1 = load("data/RMSE_16bit_int_s1.0.jld")
+
+I16 = zeros(4)
+
+for (iD,D) in enumerate([DATi1,DATi2,DATi3,DATi4])
+
+    I = zeros(6)
+    perct = [10,25,50,75,90]
+
+    for (ip,p) in enumerate(perct)
+        I[ip] = np.percentile(D["RMSE_I"][:,d]/er[2],p)
+    end
+
+    # store for accessing outside loop
+    I16[iD] = I[3]
+
+    x = iD+1+δ32
+    if iD == 4; x -= .3 end
+
+    ax1[:plot](x,I[3],"C0^")
+    ax1[:plot](ones(2)*x,[I[2],I[4]],"C0",alpha=.3,lw=2)
+end
 
 # 32BIT VERSION
 
@@ -68,7 +95,7 @@ DAT3 = load("data/RMSE_32bit_s0.01.jld")
 DAT2 = load("data/RMSE_32bit_s0.001.jld")
 DAT1 = load("data/RMSE_32bit_s0.0001.jld")
 
-d = 1550
+d = 1500
 δ32 = 0.1     #shift
 
 FF32 = zeros(9)
@@ -103,25 +130,19 @@ for (iD,D) in enumerate([DAT1,DAT2,DAT3,DAT4,DAT5,DAT6,DAT7,DAT8,DAT9])
     end
 end
 
-#plotting the line connection
-ax1[:plot]((-1:length(FF16)-2)-δ16,FF16,"k")
-for i in [1,2,3]
-    ax1[:plot]((-1:length(FF16)-2)-δ16+0.05*(i-1),PP16[:,i],"C"*"$i")
-end
-
-ax2[:plot]((-2:length(FF32)-3)-δ32,FF32,"k")
-for i in [1,2,3]
-    ax2[:plot]((-2:length(FF32)-3)-δ32+0.05*i,PP32[:,i],"C"*"$i")
-end
-
 # 32 BIT INTEGERS
-DATi3 = load("data/RMSE_32bit_int_s10000.0.jld")
-DATi2 = load("data/RMSE_32bit_int_s1000.0.jld")
-DATi1 = load("data/RMSE_32bit_int_s100.0.jld")
+DATi8 = load("data/RMSE_32bit_int_s1.0e7.jld")
+DATi7 = load("data/RMSE_32bit_int_s1.0e6.jld")
+DATi6 = load("data/RMSE_32bit_int_s100000.0.jld")
+DATi5 = load("data/RMSE_32bit_int_s10000.0.jld")
+DATi4 = load("data/RMSE_32bit_int_s1000.0.jld")
+DATi3 = load("data/RMSE_32bit_int_s100.0.jld")
+DATi2 = load("data/RMSE_32bit_int_s10.0.jld")
+DATi1 = load("data/RMSE_32bit_int_s1.0.jld")
 
-I32 = zeros(3)
+I32 = zeros(8)
 
-for (iD,D) in enumerate([DATi1,DATi2,DATi3])
+for (iD,D) in enumerate([DATi1,DATi2,DATi3,DATi4,DATi5,DATi6,DATi7,DATi8])
 
     I = zeros(6)
     perct = [10,25,50,75,90]
@@ -133,11 +154,25 @@ for (iD,D) in enumerate([DATi1,DATi2,DATi3])
     # store for accessing outside loop
     I32[iD] = I[3]
 
-    x = iD+2+δ32
+    x = iD+1+δ32
     ax2[:plot](x,I[3],"C0^")
-    #ax2[:plot](ones(2)*x,[I[2],I[4]],"CO",alpha=.3,lw=2)
+    ax2[:plot](ones(2)*x,[I[2],I[4]],"C0",alpha=.3,lw=2)
 end
 
+#plotting the line connection
+ax1[:plot]((-1:length(FF16)-2)-2*δ16,FF16,"k")
+for i in [1,2,3]
+    ax1[:plot]((-1:length(FF16)-2)-δ16+0.05*(i-1),PP16[:,i],"C"*"$i")
+end
+x = Array(-1:length(I16)-2)+3+δ32
+x[end] -= .3
+ax1[:plot](x,I16,"C0")
+
+ax2[:plot]((-2:length(FF32)-3)-δ32,FF32,"k")
+for i in [1,2,3]
+    ax2[:plot]((-2:length(FF32)-3)-δ32+0.05*i,PP32[:,i],"C"*"$i")
+end
+ax2[:plot]((1:length(I32))+δ32+1,I32,"C0")
 
 ax1[:add_patch](pat.Rectangle([-4,1],15,2,color="k",alpha=.2))
 ax2[:add_patch](pat.Rectangle([-4,1],15,2,color="k",alpha=.2))
@@ -147,12 +182,13 @@ ax2[:set_title]("Forecast Error in Lorenz 63, at 32bit, t=$(d/100)",loc="right")
 ax1[:set_ylabel]("Error (normalized)")
 ax2[:set_ylabel]("Error (normalized)")
 
-ax1[:set_xlim](-2.5,6.5)
-ax2[:set_xlim](-2.5,6.5)
+ax1[:set_xlim](-2.5,9.5)
+ax2[:set_xlim](-2.5,9.5)
 
-ax1[:set_xticks](-2:6)
-ax2[:set_xticks](-2:6)
-ax2[:set_xticklabels]([L"×10^4",L"×10^3",L"×10^2",L"×10^1",L"×1",L"×10^{-1}",L"×10^{-2}",L"×10^{-3}",L"×10^{-4}"][end:-1:1])
+ax1[:set_xticks](-2:9)
+ax2[:set_xticks](-2:9)
+xtiks = [L"×10^7",L"×10^6",L"×10^5",L"×10^4",L"×10^3",L"×10^2",L"×10^1",L"×1",L"×10^{-1}",L"×10^{-2}",L"×10^{-3}",L"×10^{-4}"][end:-1:1]
+ax2[:set_xticklabels](xtiks)
 ax2[:set_xlabel]("Scaling")
 
 # LEGEND
@@ -160,16 +196,17 @@ ax1[:plot](0,-1,"k",label="Float(16,5)")
 ax1[:plot](0,-1,"C1",label="Posit(16,1)")
 ax1[:plot](0,-1,"C2",label="Posit(16,2)")
 ax1[:plot](0,-1,"C3",label="Posit(16,3)")
+ax1[:plot](0,-1,"C0^",label="Int16/Float64")
 
-ax1[:legend](loc=3)
+ax1[:legend](loc=4)
 
 ax2[:plot](0,-1,"k",label="Float(32,8)")
 ax2[:plot](0,-1,"C1",label="Posit(32,1)")
 ax2[:plot](0,-1,"C2",label="Posit(32,2)")
 ax2[:plot](0,-1,"C3",label="Posit(32,3)")
-ax2[:plot](0,-1,"C0",label="Int32")
+ax2[:plot](0,-1,"C0",label="Int32/Float64")
 
-ax2[:legend](loc=9)
+ax2[:legend](loc=1)
 
 ax1[:set_ylim](0,1.1)
 
