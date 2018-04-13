@@ -32,10 +32,10 @@ legend(loc=1)
 
 ax1[:set_xlim](10e-50,10e50)
 ax1[:set_xscale]("log",basex=2)
-ax1[:set_ylim](2,10)
+ax1[:set_ylim](1,10)
 
 ax1[:set_xlabel]("x")
-ax1[:set_ylabel]("Worst-case decimal accuracy")
+ax1[:set_ylabel]("Worst-case numerical precision")
 
 ax2 = ax1[:twiny]()
 ax2[:set_xscale]("log",basex=10)

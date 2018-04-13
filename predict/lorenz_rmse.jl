@@ -9,14 +9,14 @@ Nlong = 10000
 Δt = 0.01
 
 σ,ρ,β = 10.,28.,8./3.
-s = 1000.
-nbit = 16
+s = 1.
+nbit = 32
 
 # start somewhere
 XYZ0 = time_integration(Nlong,Float64,[.5,.5,15.],σ,ρ,β,1.,Δt)
 
 #
-N = 1000
+N = 2000
 time = 0:Δt:(N*Δt)
 M = 500    # number of independent forecasts, one from M different start dates
 
@@ -49,18 +49,18 @@ for j = 1:M
     xyz_true = time_integration(N,Float64,xyz0,σ,ρ,β,1.,Δt)
 
     # single/half precision
-    xyz_rpf = time_integration(N,rpf,xyz0,σ,ρ,β,s,Δt)
+    xyz_rpf = time_integration_opt(N,rpf,xyz0,σ,ρ,β,s,Δt)
     RMSE_float[j,:] = sqrt.(sum((xyz_rpf-xyz_true).^2,1))
 
     for ip = 1:nes
         # posit
         P = Posit{nbit,es[ip]}
-        xyz_p = time_integration(N,P,xyz0,σ,ρ,β,s,Δt)
+        xyz_p = time_integration_opt(N,P,xyz0,σ,ρ,β,s,Δt)
 
         # calculate RMSE
         RMSE_posit[ip,j,:] = sqrt.(sum((xyz_p-xyz_true).^2,1))
     end
 end
 
-save("data/RMSE_$(nbit)bit_s$s.jld","RMSE_F",RMSE_float,"RMSE_P",RMSE_posit)
+save("data/RMSE_$(nbit)bit_opt_s$s.jld","RMSE_F",RMSE_float,"RMSE_P",RMSE_posit)
 println("Data stored for s=$s,n=$nbit")

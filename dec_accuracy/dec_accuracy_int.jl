@@ -3,8 +3,8 @@ using PyPlot
 
 include("repr_numbers.jl")
 
-nbits = 8
-febits = 4
+nbits = 16
+febits = 5
 pebits = 1
 
 flist = representable_floats(nbits,febits)

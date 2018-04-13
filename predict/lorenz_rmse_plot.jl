@@ -11,16 +11,17 @@ fig,(ax1,ax2) = subplots(2,1,figsize=(9,9),sharex=true,sharey=true)
 
 # 16BIT VERSION
 
-DAT7 = load("data/RMSE_16bit_s1000.0.jld")
-DAT6 = load("data/RMSE_16bit_s100.0.jld")
-DAT5 = load("data/RMSE_16bit_s10.0.jld")
-DAT4 = load("data/RMSE_16bit_s1.0.jld")
-DAT3 = load("data/RMSE_16bit_s0.1.jld")
-DAT2 = load("data/RMSE_16bit_s0.01.jld")
-DAT1 = load("data/RMSE_16bit_s0.001.jld")
+DAT7 = load("data/RMSE_16bit_opt_s1000.0.jld")
+DAT6 = load("data/RMSE_16bit_opt_s100.0.jld")
+DAT5 = load("data/RMSE_16bit_opt_s10.0.jld")
+DAT4 = load("data/RMSE_16bit_opt_s1.0.jld")
+DAT3 = load("data/RMSE_16bit_opt_s0.1.jld")
+DAT2 = load("data/RMSE_16bit_opt_s0.01.jld")
+DAT1 = load("data/RMSE_16bit_opt_s0.001.jld")
 
-d = 450
+d = 500
 δ16 = 0.05     #shift
+δ32 = 0.1     #shift
 
 FF16 = zeros(7)
 PP16 = zeros(7,3)
@@ -57,14 +58,13 @@ end
 ax1[:set_title]("Forecast Error in Lorenz 63, at 16bit, t=$(d/100)",loc="right")
 
 # 16 BIT INTEGERS
-DATi4 = load("data/RMSE_16bit_int_s700.0.jld")
 DATi3 = load("data/RMSE_16bit_int_s100.0.jld")
 DATi2 = load("data/RMSE_16bit_int_s10.0.jld")
 DATi1 = load("data/RMSE_16bit_int_s1.0.jld")
 
-I16 = zeros(4)
+I16 = zeros(3)
 
-for (iD,D) in enumerate([DATi1,DATi2,DATi3,DATi4])
+for (iD,D) in enumerate([DATi1,DATi2,DATi3])
 
     I = zeros(6)
     perct = [10,25,50,75,90]
@@ -77,8 +77,6 @@ for (iD,D) in enumerate([DATi1,DATi2,DATi3,DATi4])
     I16[iD] = I[3]
 
     x = iD+1+δ32
-    if iD == 4; x -= .3 end
-
     ax1[:plot](x,I[3],"C0^")
     ax1[:plot](ones(2)*x,[I[2],I[4]],"C0",alpha=.3,lw=2)
 end
@@ -96,7 +94,6 @@ DAT2 = load("data/RMSE_32bit_s0.001.jld")
 DAT1 = load("data/RMSE_32bit_s0.0001.jld")
 
 d = 1500
-δ32 = 0.1     #shift
 
 FF32 = zeros(9)
 PP32 = zeros(9,3)
@@ -131,8 +128,8 @@ for (iD,D) in enumerate([DAT1,DAT2,DAT3,DAT4,DAT5,DAT6,DAT7,DAT8,DAT9])
 end
 
 # 32 BIT INTEGERS
-DATi8 = load("data/RMSE_32bit_int_s1.0e7.jld")
-DATi7 = load("data/RMSE_32bit_int_s1.0e6.jld")
+#DATi8 = load("data/RMSE_32bit_int_s1.0e7.jld")
+#DATi7 = load("data/RMSE_32bit_int_s1.0e6.jld")
 DATi6 = load("data/RMSE_32bit_int_s100000.0.jld")
 DATi5 = load("data/RMSE_32bit_int_s10000.0.jld")
 DATi4 = load("data/RMSE_32bit_int_s1000.0.jld")
@@ -140,9 +137,9 @@ DATi3 = load("data/RMSE_32bit_int_s100.0.jld")
 DATi2 = load("data/RMSE_32bit_int_s10.0.jld")
 DATi1 = load("data/RMSE_32bit_int_s1.0.jld")
 
-I32 = zeros(8)
+I32 = zeros(6)
 
-for (iD,D) in enumerate([DATi1,DATi2,DATi3,DATi4,DATi5,DATi6,DATi7,DATi8])
+for (iD,D) in enumerate([DATi1,DATi2,DATi3,DATi4,DATi5,DATi6])
 
     I = zeros(6)
     perct = [10,25,50,75,90]
@@ -165,7 +162,6 @@ for i in [1,2,3]
     ax1[:plot]((-1:length(FF16)-2)-δ16+0.05*(i-1),PP16[:,i],"C"*"$i")
 end
 x = Array(-1:length(I16)-2)+3+δ32
-x[end] -= .3
 ax1[:plot](x,I16,"C0")
 
 ax2[:plot]((-2:length(FF32)-3)-δ32,FF32,"k")
@@ -182,11 +178,11 @@ ax2[:set_title]("Forecast Error in Lorenz 63, at 32bit, t=$(d/100)",loc="right")
 ax1[:set_ylabel]("Error (normalized)")
 ax2[:set_ylabel]("Error (normalized)")
 
-ax1[:set_xlim](-2.5,9.5)
-ax2[:set_xlim](-2.5,9.5)
+ax1[:set_xlim](-2.5,7.5)
+ax2[:set_xlim](-2.5,7.5)
 
-ax1[:set_xticks](-2:9)
-ax2[:set_xticks](-2:9)
+ax1[:set_xticks](-2:7)
+ax2[:set_xticks](-2:7)
 xtiks = [L"×10^7",L"×10^6",L"×10^5",L"×10^4",L"×10^3",L"×10^2",L"×10^1",L"×1",L"×10^{-1}",L"×10^{-2}",L"×10^{-3}",L"×10^{-4}"][end:-1:1]
 ax2[:set_xticklabels](xtiks)
 ax2[:set_xlabel]("Scaling")
@@ -196,7 +192,7 @@ ax1[:plot](0,-1,"k",label="Float(16,5)")
 ax1[:plot](0,-1,"C1",label="Posit(16,1)")
 ax1[:plot](0,-1,"C2",label="Posit(16,2)")
 ax1[:plot](0,-1,"C3",label="Posit(16,3)")
-ax1[:plot](0,-1,"C0^",label="Int16/Float64")
+ax1[:plot](0,-1,"C0",label="Int16")
 
 ax1[:legend](loc=4)
 
@@ -204,9 +200,9 @@ ax2[:plot](0,-1,"k",label="Float(32,8)")
 ax2[:plot](0,-1,"C1",label="Posit(32,1)")
 ax2[:plot](0,-1,"C2",label="Posit(32,2)")
 ax2[:plot](0,-1,"C3",label="Posit(32,3)")
-ax2[:plot](0,-1,"C0",label="Int32/Float64")
+ax2[:plot](0,-1,"C0",label="Int32")
 
-ax2[:legend](loc=1)
+ax2[:legend](loc=4)
 
 ax1[:set_ylim](0,1.1)
 

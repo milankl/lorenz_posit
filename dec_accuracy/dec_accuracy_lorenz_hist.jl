@@ -44,19 +44,19 @@ p_am = vcat(p0,plist[1],p_am,plist[end],pinf)
 # extend with zeros due to overflow
 f_wda = vcat(0,f_wda,0)
 f_am = vcat(flist[1],f_am,flist[end])
-i_wda = vcat(0,i_wda,0)
-i_am = vcat(i_am[1],i_am,ilist[end])
+i_wda = vcat(i_wda,0)
+i_am = vcat(i_am,ilist[end])
 
 # calculate histogram
 σ,β,ρ = 10.,8./3.,28.
 Δt = 0.01
 bins = 10.0.^(-8:0.1:9)
 
-H1 = lorenz_hist(load("data/lorenz_scale1.jld")["xyz"],1.,σ,β,ρ,Δt,bins)
-H10 = lorenz_hist(load("data/lorenz_scale10.jld")["xyz"],10.,σ,β,ρ,Δt,bins)
-H100 = lorenz_hist(load("data/lorenz_scale100.jld")["xyz"],100.,σ,β,ρ,Δt,bins)
-H_10 = lorenz_hist(load("data/lorenz_scale-10.jld")["xyz"],1/10.,σ,β,ρ,Δt,bins)
-H_100 = lorenz_hist(load("data/lorenz_scale-100.jld")["xyz"],1/100.,σ,β,ρ,Δt,bins)
+H1 = lorenz_hist_opt(load("data/lorenz_scale1.jld")["xyz"],1.,σ,β,ρ,Δt,bins)
+H10 = lorenz_hist_opt(load("data/lorenz_scale10.jld")["xyz"],10.,σ,β,ρ,Δt,bins)
+H100 = lorenz_hist_opt(load("data/lorenz_scale100.jld")["xyz"],100.,σ,β,ρ,Δt,bins)
+H_10 = lorenz_hist_opt(load("data/lorenz_scale-10.jld")["xyz"],1/10.,σ,β,ρ,Δt,bins)
+H_100 = lorenz_hist_opt(load("data/lorenz_scale-100.jld")["xyz"],1/100.,σ,β,ρ,Δt,bins)
 
 # PLOTTING
 fig,(ax1,ax2) = subplots(2,1,figsize=(8,6))
@@ -76,7 +76,7 @@ ax1[:set_xscale]("log",basex=2)
 ax1[:set_ylim](0,6)
 
 ax2[:set_xlabel]("x")
-ax1[:set_ylabel]("Worst-case decimal accuracy")
+ax1[:set_ylabel]("Worst-case decimal precision")
 ax2[:set_ylabel]("N")
 
 ax11 = ax1[:twiny]()
@@ -102,5 +102,5 @@ ax2[:set_title]("Numbers subject to rounding errors in rescaled Lorenz 63")
 ax2[:legend](loc=1)
 
 tight_layout()
-savefig("figs/dec_acc_hist.pdf")
+savefig("figs/dec_acc_hist_opt.pdf")
 close(fig)

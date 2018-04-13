@@ -52,7 +52,7 @@ ax1[:set_xscale]("log",basex=2)
 ax1[:set_ylim](0,6)
 
 ax1[:set_xlabel]("x")
-ax1[:set_ylabel]("Worst-case decimal accuracy")
+ax1[:set_ylabel]("Worst-case decimal precision")
 
 ax2 = ax1[:twiny]()
 ax2[:set_xscale]("log",basex=10)
