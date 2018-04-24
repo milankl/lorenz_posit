@@ -11,22 +11,25 @@ fig,(ax1,ax2) = subplots(2,1,figsize=(9,9),sharex=true,sharey=true)
 
 # 16BIT VERSION
 
-DAT7 = load("data/RMSE_16bit_opt_s1000.0.jld")
-DAT6 = load("data/RMSE_16bit_opt_s100.0.jld")
-DAT5 = load("data/RMSE_16bit_opt_s10.0.jld")
-DAT4 = load("data/RMSE_16bit_opt_s1.0.jld")
-DAT3 = load("data/RMSE_16bit_opt_s0.1.jld")
-DAT2 = load("data/RMSE_16bit_opt_s0.01.jld")
-DAT1 = load("data/RMSE_16bit_opt_s0.001.jld")
+DAT10 = load("data/RMSE_16bit_opt_s100000.0.jld")
+DAT9 = load("data/RMSE_16bit_opt_s10000.0.jld")
+DAT8 = load("data/RMSE_16bit_opt_s1000.0.jld")
+DAT7 = load("data/RMSE_16bit_opt_s100.0.jld")
+DAT6 = load("data/RMSE_16bit_opt_s10.0.jld")
+DAT5 = load("data/RMSE_16bit_opt_s1.0.jld")
+DAT4 = load("data/RMSE_16bit_opt_s0.1.jld")
+DAT3 = load("data/RMSE_16bit_opt_s0.01.jld")
+DAT2 = load("data/RMSE_16bit_opt_s0.001.jld")
+DAT1 = load("data/RMSE_16bit_opt_s0.0001.jld")
 
 d = 500
 δ16 = 0.05     #shift
 δ32 = 0.1     #shift
 
-FF16 = zeros(7)
-PP16 = zeros(7,3)
+FF16 = zeros(10)
+PP16 = zeros(10,3)
 
-for (iD,D) in enumerate([DAT1,DAT2,DAT3,DAT4,DAT5,DAT6,DAT7])
+for (iD,D) in enumerate([DAT1,DAT2,DAT3,DAT4,DAT5,DAT6,DAT7,DAT8,DAT9,DAT10])
 
     F = zeros(6)
     P = zeros(3,6)
@@ -44,12 +47,12 @@ for (iD,D) in enumerate([DAT1,DAT2,DAT3,DAT4,DAT5,DAT6,DAT7])
     # store for accessing outside loop
     FF16[iD],PP16[iD,:] = F[3],P[:,3]
 
-    x = iD-2*δ16-2
+    x = iD-2*δ16-3
     ax1[:plot](x,F[3],"ko")
     ax1[:plot](ones(2)*x,[F[2],F[4]],"k",alpha=.3,lw=2)
 
     for i = 1:3
-        x = iD+.05*(i-1)-δ16-2
+        x = iD+.05*(i-1)-δ16-3
         ax1[:plot](x,P[i,3],"C"*"$i"*"o")
         ax1[:plot](ones(2)*x,[P[i,2],P[i,4]],"C"*"$i",alpha=.3,lw=2)
     end
@@ -83,22 +86,23 @@ end
 
 # 32BIT VERSION
 
-DAT9 = load("data/RMSE_32bit_s10000.0.jld")
-DAT8 = load("data/RMSE_32bit_s1000.0.jld")
-DAT7 = load("data/RMSE_32bit_s100.0.jld")
-DAT6 = load("data/RMSE_32bit_s10.0.jld")
-DAT5 = load("data/RMSE_32bit_s1.0.jld")
-DAT4 = load("data/RMSE_32bit_s0.1.jld")
-DAT3 = load("data/RMSE_32bit_s0.01.jld")
-DAT2 = load("data/RMSE_32bit_s0.001.jld")
-DAT1 = load("data/RMSE_32bit_s0.0001.jld")
+DAT10 = load("data/RMSE_32bit_opt_s100000.0.jld")
+DAT9 = load("data/RMSE_32bit_opt_s10000.0.jld")
+DAT8 = load("data/RMSE_32bit_opt_s1000.0.jld")
+DAT7 = load("data/RMSE_32bit_opt_s100.0.jld")
+DAT6 = load("data/RMSE_32bit_opt_s10.0.jld")
+DAT5 = load("data/RMSE_32bit_opt_s1.0.jld")
+DAT4 = load("data/RMSE_32bit_opt_s0.1.jld")
+DAT3 = load("data/RMSE_32bit_opt_s0.01.jld")
+DAT2 = load("data/RMSE_32bit_opt_s0.001.jld")
+DAT1 = load("data/RMSE_32bit_opt_s0.0001.jld")
 
 d = 1500
 
-FF32 = zeros(9)
-PP32 = zeros(9,3)
+FF32 = zeros(10)
+PP32 = zeros(10,3)
 
-for (iD,D) in enumerate([DAT1,DAT2,DAT3,DAT4,DAT5,DAT6,DAT7,DAT8,DAT9])
+for (iD,D) in enumerate([DAT1,DAT2,DAT3,DAT4,DAT5,DAT6,DAT7,DAT8,DAT9,DAT10])
 
     F = zeros(6)
     P = zeros(3,6)
@@ -157,9 +161,9 @@ for (iD,D) in enumerate([DATi1,DATi2,DATi3,DATi4,DATi5,DATi6])
 end
 
 #plotting the line connection
-ax1[:plot]((-1:length(FF16)-2)-2*δ16,FF16,"k")
+ax1[:plot]((-2:length(FF16)-3)-2*δ16,FF16,"k")
 for i in [1,2,3]
-    ax1[:plot]((-1:length(FF16)-2)-δ16+0.05*(i-1),PP16[:,i],"C"*"$i")
+    ax1[:plot]((-2:length(FF16)-3)-δ16+0.05*(i-1),PP16[:,i],"C"*"$i")
 end
 x = Array(-1:length(I16)-2)+3+δ32
 ax1[:plot](x,I16,"C0")
@@ -207,5 +211,5 @@ ax2[:legend](loc=4)
 ax1[:set_ylim](0,1.1)
 
 tight_layout()
-savefig("figs/forecast_error.pdf")
+savefig("figs/forecast_error_opt.pdf")
 close(fig)
