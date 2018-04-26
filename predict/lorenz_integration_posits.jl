@@ -190,3 +190,57 @@ function time_integration_int(Nt,I,xyz,σ,ρ,β1,β2,s,Δt)
 
     return Xoutput
 end
+
+# time integration
+function time_integration_fullrhs(Nt,I,xyz,σ,ρ,β,s,Δt)
+    # create conversion from float to Integer system with specified rounding mode
+    #Iround(x) = I(round(x))
+
+    # apply the scale to the initial conditions and L63 parameters
+    xyz = s*xyz
+    s_float = s
+
+    # preallocate for storing results - store without scaling
+    Xoutput = Array{Float64}(3,Nt+1)
+    Xoutput[:,1] = Float64.(xyz)/s
+
+    # Runge Kutta 4th order coefficients including time step and sigma for x
+    RKα = zeros(3,4)
+    RKα[2,:] = 1./([1/6.,1/3.,1/3.,1/6.]*Δt)
+    RKα[3,:] = RKα[2,:]
+    RKα[1,:] = RKα[2,:]/σ
+    RKαz = RKα[2,:]/β
+
+    RKβ = zeros(3,3)
+    RKβ[2,:] = 1./([1/2.,1/2.,1.]*Δt)
+    RKβ[3,:] = RKβ[2,:]
+    RKβ[1,:] = RKβ[2,:]/σ
+    RKβz = RKβ[2,:]/β
+
+    # preallocate memory for intermediate results
+    xyz0 = deepcopy(xyz)
+    xyz1 = deepcopy(xyz)
+    dxyz = zeros(xyz)   # rhs
+
+    for i = 1:Nt
+        xyz1 = deepcopy(xyz)
+
+        for rki = 1:4
+            dxyz = rhs_opt(dxyz,xyz1[1],xyz1[2],xyz1[3],ρ,β,s)
+
+            # sum the RK steps on the go
+            xyz0 += dxyz./RKα[:,rki]
+
+            if rki < 4
+                xyz1[:] = xyz + dxyz./RKβ[:,rki]
+            end
+        end
+
+        xyz = Float64.(I.(deepcopy(xyz0)))
+
+        # store as 64bit undo scaling
+        Xoutput[:,i+1] = Float64.(xyz)/s
+    end
+
+    return Xoutput
+end
