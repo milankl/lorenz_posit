@@ -62,7 +62,7 @@ end
 
 # time integration
 function time_integration_opt(Nt,P,xyz,σ,ρ,β,s,Δt)
-    # apply the scale to the initial conditions and L63 parameters
+    # apply the scale to the initial conditions
     xyz = s*xyz
     s_float = s
 

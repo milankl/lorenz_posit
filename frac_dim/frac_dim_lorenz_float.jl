@@ -27,22 +27,23 @@ for ip = 1:length(frac_dims["nbits"])
 
     # create initial conditions
     Nt0 = 1000      # length of spin-up
-    global Δt = P(0.01)    # time step
+    Δt = 0.01    # time step
 
-    global σ = P(10.)      # Lorenz 63 coefficients
-    global β = P(8./3.)
-    global ρ = P(28.)
+    σ = 10.      # Lorenz 63 coefficients
+    β = 8./3.
+    ρ = 28.
+    s = 0.1
 
     # start somewhere
-    xyz = P.([0.6,0.5,15.])
+    xyz = [0.6,0.5,15.]
 
     for (iNt,Nt) in enumerate(frac_dims["Nt"])
 
         print("Float($nbits,$ebits) with $Nt time steps.")
 
         # do integration
-        xyzc = time_integration(Nt0,P,xyz)  # spin-up
-        xyzc = time_integration(Nt,P,P.(xyzc[:,end]))
+        xyzc = time_integration_opt(Nt0,Float64,xyz,σ,ρ,β,s,Δt)  # spin-up
+        xyzc = time_integration_opt(Nt,P,xyzc[:,end],σ,ρ,β,s,Δt)
 
         # rescale - use boundary to avoid a value that is exactly zero
         rescale(x,boundary=1e-10) = (x - (minimum(x)-boundary))/(maximum(x) - (minimum(x)-boundary))
