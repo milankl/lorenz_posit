@@ -14,7 +14,7 @@ p_am2,p_wda2 = wc_dec_acc_posit(nbits,2)
 i_am,i_wda = wc_dec_acc_int(nbits)
 
 # PLOTTING
-fig,ax1 = subplots(1,1,sharex=true)
+fig,ax1 = subplots(1,1,sharex=true,figsize=(9,4))
 
 #ax1[:plot](f_am5,f_wda5,"grey",label="Floats($nbits,5)")
 ax1[:plot](f_am8,f_wda8,"C0",label="Floats($nbits,8)")
@@ -31,14 +31,13 @@ ax1[:fill_between](i_am,0.,i_wda,color="C2",alpha=.3)
 legend(loc=1)
 
 ax1[:set_xlim](10e-50,10e50)
-ax1[:set_xscale]("log",basex=2)
-ax1[:set_ylim](1,10)
+ax1[:set_xscale]("log",basex=10)
+ax1[:set_xticks](10.0.^(-50:10:50))
+ax1[:set_ylim](0,10)
 
 ax1[:set_xlabel]("x")
 ax1[:set_ylabel]("Worst-case numerical precision")
 
-ax2 = ax1[:twiny]()
-ax2[:set_xscale]("log",basex=10)
-ax2[:set_xlim](ax1[:get_xlim]())
-
 tight_layout()
+savefig("figs/dec_acc_32bit.pdf")
+close(fig)

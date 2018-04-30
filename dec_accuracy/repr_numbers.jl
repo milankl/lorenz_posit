@@ -12,14 +12,6 @@ function representable_floats(nbits,ebits)
     bias = 2^(ebits-1) - 1
     sbits = nbits-ebits-1     # number of significand bits (minus one for sign bit)
 
-    #=
-    setprecision(256)
-    repr_floats = BigFloat[0.]           # represented as 000...0000
-    bigzero = big"0.0"
-    one = big"1.0"
-    two = big"2.0"
-    =#
-
     repr_floats = []           # represented as 000...0000
 
     # subnormal numbers (exponent is 0)
@@ -37,7 +29,7 @@ function representable_floats(nbits,ebits)
     return Float64.(repr_floats)
 end
 
-function representable_flaots_expo(nbits,ebits)
+function representable_floats_expo(nbits,ebits)
     bias = 2^(ebits-1) - 1
     sbits = sbits = nbits-ebits-1
     smallsubnormal = 2.0^(1-bias)/2^sbits
@@ -122,8 +114,8 @@ function wc_dec_acc_posit(nbits,ebits)
     p_wda = -log10.(abs.(log10.(p_am./plist_next)))
 
     # extend first and last point, taking no overflow/underflow into account
-    p0 = plist[1]/16    # something much smaller than minpos
-    pinf = plist[end]*16    # something much bigger than maxpos
+    p0 = plist[1]/10000    # something much smaller than minpos
+    pinf = plist[end]*10000    # something much bigger than maxpos
 
     # worst-case decimal accuracy for these extreme values
     p_wda_0 = -log10.(abs.(log10.(p0/plist[2])))
@@ -154,16 +146,19 @@ function wc_dec_acc_float(nbits,ebits)
     f_wda = -log10.(abs.(log10.(f_am./flist_next)))
 
     # extend with zeros due to overflow
-    f_wda = vcat(0,f_wda,0)
-    f_am = vcat(flist[1],f_am,flist[end])
+    f_wda = vcat(0.73,f_wda)
+    f_am = vcat(flist[1],f_am)
 
     return f_am,f_wda
 end
 
 function wc_dec_acc_int(nbits)
 
+    # assume rounding mode down
+    # somehow interpolate with 0.13 onto the smallest representable number 1...
+
     i_am = [1.,2.,2^(nbits-1)-1,2^(nbits-1)-1]
-    i_wda = [0.,-log10(abs(log10(2))),-log10(abs(log10((2^(nbits-1)-1)/(2^(nbits-1)-2)))),0]
+    i_wda = [0.13,-log10(abs(log10(2))),-log10(abs(log10((2^(nbits-1)-1)/(2^(nbits-1)-2)))),0]
 
     return i_am,i_wda
 end
