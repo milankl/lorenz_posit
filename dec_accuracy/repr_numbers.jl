@@ -128,7 +128,7 @@ function wc_dec_acc_posit(nbits,ebits)
     p_wda_r = vcat(p_wda_0,p_wda_minpos,p_wda,p_wda_maxpos,p_wda_inf)
     p_amr = vcat(p0,plist[1],p_am,plist[end],pinf)
 
-    return p_am,p_wda
+    return p_amr,p_wda_r
 end
 
 function wc_dec_acc_float(nbits,ebits)
@@ -157,8 +157,8 @@ function wc_dec_acc_int(nbits)
     # assume rounding mode down
     # somehow interpolate with 0.13 onto the smallest representable number 1...
 
-    i_am = [1.,2.,2^(nbits-1)-1,2^(nbits-1)-1]
-    i_wda = [0.13,-log10(abs(log10(2))),-log10(abs(log10((2^(nbits-1)-1)/(2^(nbits-1)-2)))),0]
+    i_am = [1.,2.,2^(nbits-1)-1]
+    i_wda = [0.13,-log10(abs(log10(2))),-log10(abs(log10((2^(nbits-1)-1)/(2^(nbits-1)-2))))]
 
     return i_am,i_wda
 end

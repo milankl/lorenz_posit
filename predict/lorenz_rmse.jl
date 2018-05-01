@@ -9,14 +9,14 @@ Nlong = 10000
 Δt = 0.01
 
 σ,ρ,β = 10.,28.,8./3.
-s = 4e7
-nbit = 32
+s = 1e7
+nbit = 16
 
 # start somewhere
 XYZ0 = time_integration(Nlong,Float64,[.5,.5,15.],σ,ρ,β,1.,Δt)
 
 #
-N = 2500
+N = 1000
 time = 0:Δt:(N*Δt)
 M = 500    # number of independent forecasts, one from M different start dates
 
@@ -55,8 +55,8 @@ for j = 1:M
     xyz_rpf = time_integration_fullrhs(N,rpf,xyz0,σ,ρ,β,s,Δt)
     RMSE_float[j,:] = sqrt.(sum((xyz_rpf-xyz_true).^2,1))
 
-    xyz_rpi = time_integration_fullrhs(N,rpi,xyz0,σ,ρ,β,s,Δt)
-    RMSE_int[j,:] = sqrt.(sum((xyz_rpi-xyz_true).^2,1))
+    #xyz_rpi = time_integration_fullrhs(N,rpi,xyz0,σ,ρ,β,s,Δt)
+    RMSE_int[j,:] = zeros(xyz_true[1,:])
 
     for ip = 1:nes
         # posit

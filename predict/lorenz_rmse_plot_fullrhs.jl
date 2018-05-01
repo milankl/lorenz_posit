@@ -11,6 +11,10 @@ fig,(ax1,ax2) = subplots(2,1,figsize=(9,9))
 
 # 16BIT
 
+DAT12 = load("data/fullrhs/RMSE_16bit_opt_s1.0e7.jld")
+DAT11 = load("data/fullrhs/RMSE_16bit_opt_s1.0e6.jld")
+DAT10 = load("data/fullrhs/RMSE_16bit_opt_s100000.0.jld")
+DAT9 = load("data/fullrhs/RMSE_16bit_opt_s10000.0.jld")
 DAT8 = load("data/fullrhs/RMSE_16bit_opt_s600.0.jld")
 DAT7 = load("data/fullrhs/RMSE_16bit_opt_s100.0.jld")
 DAT6 = load("data/fullrhs/RMSE_16bit_opt_s10.0.jld")
@@ -22,12 +26,12 @@ DAT1 = load("data/fullrhs/RMSE_16bit_opt_s0.0001.jld")
 
 d16 = 800
 
-FF16 = zeros(8)
-PP16 = zeros(8,3)
-I16 = zeros(8)
+FF16 = zeros(12)
+PP16 = zeros(12,3)
+I16 = zeros(12)
 δ32 = 0.05
 
-for (iD,D) in enumerate([DAT1,DAT2,DAT3,DAT4,DAT5,DAT6,DAT7,DAT8])
+for (iD,D) in enumerate([DAT1,DAT2,DAT3,DAT4,DAT5,DAT6,DAT7,DAT8,DAT9,DAT10,DAT11,DAT12])
 
     F = zeros(5)
     P = zeros(3,5)
@@ -47,8 +51,10 @@ for (iD,D) in enumerate([DAT1,DAT2,DAT3,DAT4,DAT5,DAT6,DAT7,DAT8])
     x = iD-3-δ32
     ax1[:plot](x,F[3],"ko")
     ax1[:plot](ones(2)*x,[F[2],F[4]],"k",alpha=.3,lw=2)
-    ax1[:plot](x-δ32,I[3],"C0o")
-    ax1[:plot](ones(2)*(x-δ32),[I[2],I[4]],"C0",alpha=.3,lw=2)
+    if iD < 9
+        ax1[:plot](x-δ32,I[3],"C0o")
+        ax1[:plot](ones(2)*(x-δ32),[I[2],I[4]],"C0",alpha=.3,lw=2)
+    end
 
     for i = 1:3
         x = iD+0.05*i-3-δ32
@@ -116,7 +122,7 @@ for i in [1,2,3]
     ax1[:plot]((-2:length(FF16)-3)-δ32+0.05*i,PP16[:,i],"C"*"$i",zorder=1)
 end
 x = Array(-2:length(I16)-3)-2*δ32
-ax1[:plot](x,I16,"C0")
+ax1[:plot](x[1:end-4],I16[1:end-4],"C0")
 
 #plotting the line connection
 ax2[:plot]((-2:length(FF32)-3)-δ32,FF32,"k",zorder=1)
@@ -137,9 +143,9 @@ ax2[:set_ylabel]("Error (normalized)")
 ax1[:set_xlim](-2.5,10.5)
 ax2[:set_xlim](-2.5,10.5)
 
-ax1[:set_xticks](-2:5)
+ax1[:set_xticks](-2:9)
 ax2[:set_xticks](-2:10)
-xtiks1 = [L"×600",L"×10^2",L"×10^1",L"×1",L"×10^{-1}",L"×10^{-2}",L"×10^{-3}",L"×10^{-4}"][end:-1:1]
+xtiks1 = [L"×10^7",L"×10^6",L"×10^5",L"×10^4",L"×600",L"×10^2",L"×10^1",L"×1",L"×10^{-1}",L"×10^{-2}",L"×10^{-3}",L"×10^{-4}"][end:-1:1]
 xtiks2 = [L"×4\cdot 10^7",L"×10^7",L"×10^6",L"×10^5",L"×10^4",L"×10^3",L"×10^2",L"×10^1",L"×1",L"×10^{-1}",L"×10^{-2}",L"×10^{-3}",L"×10^{-4}"][end:-1:1]
 ax1[:set_xticklabels](xtiks1)
 ax2[:set_xticklabels](xtiks2)

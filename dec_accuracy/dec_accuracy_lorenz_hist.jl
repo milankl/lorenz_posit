@@ -42,10 +42,10 @@ p_wda = vcat(p_wda_0,p_wda_minpos,p_wda,p_wda_maxpos,p_wda_inf)
 p_am = vcat(p0,plist[1],p_am,plist[end],pinf)
 
 # extend with zeros due to overflow
-f_wda = vcat(0,f_wda,0)
-f_am = vcat(flist[1],f_am,flist[end])
-i_wda = vcat(i_wda,0)
-i_am = vcat(i_am,ilist[end])
+f_wda = vcat(0.55,f_wda)        # extrapolate somehow
+f_am = vcat(flist[1],f_am)
+i_wda = vcat(i_wda)
+i_am = vcat(i_am)
 
 # calculate histogram
 σ,β,ρ = 10.,8./3.,28.
@@ -59,29 +59,29 @@ H_10 = lorenz_hist_opt(load("data/lorenz_scale-10.jld")["xyz"],1/10.,σ,β,ρ,Δ
 H_100 = lorenz_hist_opt(load("data/lorenz_scale-100.jld")["xyz"],1/100.,σ,β,ρ,Δt,bins)
 
 # PLOTTING
-fig,(ax1,ax2) = subplots(2,1,figsize=(8,6))
+fig,(ax1,ax2) = subplots(2,1,figsize=(8,6),sharex=true)
 
-ax1[:plot](f_am,f_wda,label="Float($nbits,$febits)")
-ax1[:plot](p_am,p_wda,label="Posit($nbits,$pebits)")
+ax1[:plot](f_am,f_wda,"k",label="Float($nbits,$febits)")
+ax1[:plot](p_am,p_wda,"C1",label="Posit($nbits,$pebits)")
 ax1[:plot](i_am,i_wda,"C2",label="Int$nbits")
 
-ax1[:fill_between](f_am,0.,f_wda,facecolor="C0",alpha=0.3)
+ax1[:fill_between](f_am,0.,f_wda,facecolor="k",alpha=0.3)
 ax1[:fill_between](i_am,0.,i_wda,facecolor="C2",alpha=0.3)
 ax1[:fill_between](p_am,0.,p_wda,where=((p_am .>= plist[1]).*(p_am .<= plist[end])),facecolor="C1",alpha=0.3)
 ax1[:fill_between](p_am,0.,p_wda,where=((p_am .<= plist[1]).|(p_am .>= plist[end])),facecolor="C1",alpha=0.1)
 
 ax1[:legend](loc=1)
 
-ax1[:set_xscale]("log",basex=2)
+ax1[:set_xscale]("log",basex=10)
 ax1[:set_ylim](0,6)
 
 ax2[:set_xlabel]("x")
 ax1[:set_ylabel]("Worst-case decimal precision")
 ax2[:set_ylabel]("N")
 
-ax11 = ax1[:twiny]()
-ax11[:set_xscale]("log",basex=10)
-ax11[:set_xlim](ax1[:get_xlim]())
+# ax11 = ax1[:twiny]()
+# ax11[:set_xscale]("log",basex=10)
+# ax11[:set_xlim](ax1[:get_xlim]())
 
 xtik = 10.0.^(-10:2:10)
 ax11[:set_xticks](xtik)
@@ -91,9 +91,9 @@ ax2[:set_xlim](ax1[:get_xlim]())
 ax2[:set_xticks](xtik)
 
 # ax2[:plot](bins[1:end-1],H100,label=L"s=10^2",drawstyle="steps-post")
-ax2[:plot](bins[1:end-1],H10,label=L"s=10^1",drawstyle="steps-post")
-ax2[:plot](bins[1:end-1],H1,label=L"s=10^0",drawstyle="steps-post")
-ax2[:plot](bins[1:end-1],H_10,label=L"s=10^{-1}",drawstyle="steps-post")
+ax2[:plot](bins[1:end-1],H10,"C0",label=L"s=10^1",drawstyle="steps-post")
+ax2[:plot](bins[1:end-1],H1,"C3",label=L"s=10^0",drawstyle="steps-post")
+ax2[:plot](bins[1:end-1],H_10,"C4",label=L"s=10^{-1}",drawstyle="steps-post")
 # ax2[:plot](bins[1:end-1],H_100,label=L"s=10^{-2}",drawstyle="steps-post")
 
 
