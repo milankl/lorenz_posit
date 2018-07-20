@@ -5,7 +5,7 @@ include("repr_numbers.jl")
 
 nbits = 16
 febits = 5
-pebits = 1
+pebits = 0
 
 flist = representable_floats(nbits,febits)
 plist = representable_posits(nbits,pebits)
@@ -66,8 +66,8 @@ ax1[:set_ylabel]("Worst-case decimal precision")
 ax2 = ax1[:twiny]()
 ax2[:set_xscale]("log",basex=10)
 ax2[:set_xlim](ax1[:get_xlim]())
-ax2[:set_xticks](10.0.^(-8:2:8))
+#ax2[:set_xticks](10.0.^(-8:2:8))
 
 tight_layout()
-savefig("figs/dec_acc_16bit.pdf")
+savefig("figs/dec_acc_16bit_0.pdf")
 close(fig)
