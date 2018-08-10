@@ -4,8 +4,8 @@ using PyPlot
 include("repr_numbers.jl")
 
 nbits = 16
-febits = 5
-pebits = 0
+febits = 8
+pebits = 1
 
 flist = representable_floats(nbits,febits)
 plist = representable_posits(nbits,pebits)
@@ -69,5 +69,5 @@ ax2[:set_xlim](ax1[:get_xlim]())
 #ax2[:set_xticks](10.0.^(-8:2:8))
 
 tight_layout()
-savefig("figs/dec_acc_16bit_0.pdf")
+savefig("figs/dec_acc_bfloat16.pdf")
 close(fig)
