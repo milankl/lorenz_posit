@@ -55,8 +55,8 @@ p0_am, p0_wda, p0list = wcdp_posit(16,0)
 p1_am, p1_wda, p1list = wcdp_posit(16,1)
 p2_am, p2_wda, p2list = wcdp_posit(16,2)
 
-# calculate histogram
-σ,β,ρ = 10.,8./3.,28.
+# calculate histogram\mathnormal{
+σ,β,ρ = 10.,8/3,28.
 Δt = 0.01
 bins = 10.0.^(-8:0.1:9)
 
@@ -70,9 +70,9 @@ H_100 = lorenz_hist_opt(load("data/lorenz_scale-100.jld")["xyz"],1/100.,σ,β,ρ
 fig,(ax1,ax2) = subplots(2,1,figsize=(6,6),sharex=false)
 
 ax1[:plot](f_am,f_wda,"k",label="Float$nbits",lw=2)
-ax1[:plot](p0_am,p0_wda,"C1",label="Posit($nbits,0)")
-ax1[:plot](p1_am,p1_wda,"C2",label="Posit($nbits,1)")
-ax1[:plot](p2_am,p2_wda,"C3",label="Posit($nbits,2)")
+ax1[:plot](p0_am,p0_wda,"C1",label="Posit($nbits,0)",lw=1.4)
+ax1[:plot](p1_am,p1_wda,"C2",label="Posit($nbits,1)",lw=1.2)
+ax1[:plot](p2_am,p2_wda,"C3",label="Posit($nbits,2)",lw=0.8)
 ax1[:plot](i_am,i_wda,"C0",label="Int$nbits",lw=2)
 
 ax1[:fill_between](f_am,-0.1,f_wda,edgecolor="k",facecolor="none",linestyle="--")
@@ -90,7 +90,7 @@ ax1[:set_ylim](0,6)
 
 
 ax2[:set_xlabel]("value")
-ax1[:set_ylabel]("digits")
+ax1[:set_ylabel]("decimal places")
 ax2[:set_ylabel](L"$N$ [$10^4$]")
 
 
