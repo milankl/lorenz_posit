@@ -1,8 +1,9 @@
+using PyCall
+using PyPlot
+@pyimport numpy as np
+
 using SigmoidNumbers
 using JLD
-using PyPlot
-using PyCall
-@pyimport numpy as np
 
 cd("/home/kloewer/julia/lorenz_posit/dec_accuracy/")
 include("repr_numbers.jl")
@@ -14,10 +15,11 @@ pebits = 1
 
 flist = representable_floats(nbits,febits)
 ilist = [1,2^(nbits-1)-2,2^(nbits-1)-1]
+ilist = [1,2^(nbits-1)-2,2^(nbits-1)-1] ./ 10
 
 # arithmetic mean between all representable numbers
 f_am = (flist[1:end-1]+flist[2:end])/2.
-i_am = ilist[1:end-1]+0.5
+i_am = ilist[1:end-1]+0.05
 
 # worst case decimal accuracy
 f_wda = -log10.(abs.(log10.(f_am./flist[1:end-1])))
@@ -61,22 +63,38 @@ p2_am, p2_wda, p2list = wcdp_posit(16,2)
 bins = 10.0.^(-8:0.1:9)
 
 H1 = lorenz_hist_opt(load("data/lorenz_scale1.jld")["xyz"],1.,σ,β,ρ,Δt,bins)
-H10 = lorenz_hist_opt(load("data/lorenz_scale10.jld")["xyz"],10.,σ,β,ρ,Δt,bins)
+# H10 = lorenz_hist_opt(load("data/lorenz_scale10.jld")["xyz"],10.,σ,β,ρ,Δt,bins)
 H100 = lorenz_hist_opt(load("data/lorenz_scale100.jld")["xyz"],100.,σ,β,ρ,Δt,bins)
-H_10 = lorenz_hist_opt(load("data/lorenz_scale-10.jld")["xyz"],1/10.,σ,β,ρ,Δt,bins)
+# H_10 = lorenz_hist_opt(load("data/lorenz_scale-10.jld")["xyz"],1/10.,σ,β,ρ,Δt,bins)
 H_100 = lorenz_hist_opt(load("data/lorenz_scale-100.jld")["xyz"],1/100.,σ,β,ρ,Δt,bins)
 
+decacc(x,d,b) = -log10.(abs.(log10.(round.(x,d,b)./x)))
+iy = vcat(0.5000001,1.49999999:1:(2^15-1))
+iy_wda = decacc(iy,0,10)
+iy2 = copy(iy)
+iy2[1] = 1
+
+fpm = 6
+fpn = 10
+ifpy = vcat(2.0^(-fpn-1) + 0.0000001,(2.0^-fpn+2.0^(-fpn-1)-0.0000001):2.0^-fpn:(2.0^(fpm-1)-2.0^-fpn))
+ifpy_wda = decacc(ifpy,fpn,2)
+ifpy2 = copy(ifpy)
+ifpy2[1] = 2.0^-fpn
+
 ## PLOTTING
+ioff()
 fig,(ax1,ax2) = subplots(2,1,figsize=(6,6),sharex=false)
 
 ax1[:plot](f_am,f_wda,"k",label="Float$nbits",lw=2)
 ax1[:plot](p0_am,p0_wda,"C1",label="Posit($nbits,0)",lw=1.4)
-ax1[:plot](p1_am,p1_wda,"C2",label="Posit($nbits,1)",lw=1.2)
-ax1[:plot](p2_am,p2_wda,"C3",label="Posit($nbits,2)",lw=0.8)
-ax1[:plot](i_am,i_wda,"C0",label="Int$nbits",lw=2)
+ax1[:plot](p1_am,p1_wda,"#50C070",label="Posit($nbits,1)",lw=1.2)
+ax1[:plot](p2_am,p2_wda,"#900000",label="Posit($nbits,2)",lw=0.8)
+ax1[:plot](iy,iy_wda,"C0",label="Int$nbits",lw=2)
+ax1[:plot](ifpy,ifpy_wda,"#00E0E0",label="Q$fpm.$fpn",lw=2)
 
 ax1[:fill_between](f_am,-0.1,f_wda,edgecolor="k",facecolor="none",linestyle="--")
-ax1[:fill_between](i_am,-0.1,i_wda,edgecolor="C0",facecolor="none",linestyle="--")
+ax1[:fill_between](iy2,-0.1,iy_wda,edgecolor="C0",facecolor="none",linestyle="--")
+ax1[:fill_between](ifpy2,-0.1,ifpy_wda,edgecolor="#00E0E0",facecolor="none",linestyle="--")
 ax1[:fill_between](p0_am,-0.1,p0_wda,where=((p0_am .>= p0list[1]).*(p0_am .<= p0list[end])),edgecolor="C1",facecolor="none",linestyle="--")
 ax1[:fill_between](p1_am,-0.1,p1_wda,where=((p1_am .>= p1list[1]).*(p1_am .<= p1list[end])),edgecolor="C2",facecolor="none",linestyle="--")
 ax1[:fill_between](p2_am,-0.1,p2_wda,where=((p2_am .>= p2list[1]).*(p2_am .<= p2list[end])),edgecolor="C3",facecolor="none",linestyle="--")
@@ -125,5 +143,5 @@ ax2[:set_title]("b",loc="right",fontweight="bold")
 ax2[:legend](loc=1,fontsize=9)
 
 tight_layout()
-savefig("/home/kloewer/julia/lorenz_posit/dec_accuracy/figs/dec_acc_hist.png",dpi=300)
+savefig("/home/kloewer/julia/lorenz_posit/dec_accuracy/figs/dec_acc_hist2.png",dpi=300)
 close(fig)
