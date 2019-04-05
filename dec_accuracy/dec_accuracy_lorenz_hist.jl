@@ -5,7 +5,7 @@ using PyPlot
 using SigmoidNumbers
 using JLD
 
-cd("/home/kloewer/julia/lorenz_posit/dec_accuracy/")
+cd("/home/kloewer/phd/lorenz_posit/dec_accuracy/")
 include("repr_numbers.jl")
 include("lorenz_hist_functions.jl")
 
@@ -65,7 +65,7 @@ bins = 10.0.^(-8:0.1:9)
 H1 = lorenz_hist_opt(load("data/lorenz_scale1.jld")["xyz"],1.,σ,β,ρ,Δt,bins)
 # H10 = lorenz_hist_opt(load("data/lorenz_scale10.jld")["xyz"],10.,σ,β,ρ,Δt,bins)
 H100 = lorenz_hist_opt(load("data/lorenz_scale100.jld")["xyz"],100.,σ,β,ρ,Δt,bins)
-# H_10 = lorenz_hist_opt(load("data/lorenz_scale-10.jld")["xyz"],1/10.,σ,β,ρ,Δt,bins)
+H_10 = lorenz_hist_opt(load("data/lorenz_scale-10.jld")["xyz"],1/10.,σ,β,ρ,Δt,bins)
 H_100 = lorenz_hist_opt(load("data/lorenz_scale-100.jld")["xyz"],1/100.,σ,β,ρ,Δt,bins)
 
 decacc(x,d,b) = -log10.(abs.(log10.(round.(x,d,b)./x)))
@@ -100,7 +100,7 @@ ax1[:fill_between](p1_am,-0.1,p1_wda,where=((p1_am .>= p1list[1]).*(p1_am .<= p1
 ax1[:fill_between](p2_am,-0.1,p2_wda,where=((p2_am .>= p2list[1]).*(p2_am .<= p2list[end])),edgecolor="C3",facecolor="none",linestyle="--")
 #ax1[:fill_between](p_am,0.,p_wda,where=((p_am .<= plist[1]).|(p_am .>= plist[end])),facecolor="C1",alpha=0.1)
 
-ax1[:legend](loc=2,fontsize=9)
+#ax1[:legend](loc=2,fontsize=9)
 
 ax1[:set_xlim](1e-16,1e16)
 ax1[:set_xscale]("log",basex=10)
@@ -110,6 +110,13 @@ ax1[:set_ylim](0,6)
 ax2[:set_xlabel]("value")
 ax1[:set_ylabel]("decimal places")
 ax2[:set_ylabel](L"$N$ [$10^4$]")
+
+ax1[:text](9e-6,2.5,"Posit(16,0)",color="C1",rotation=67)
+ax1[:text](2e-13,0.5,"Posit(16,1)",color="#50C070")
+ax1[:text](5e-15,2,"Posit(16,2)",color="#900000")
+ax1[:text](5e-7,4.1,"Float16",color="k")
+ax1[:text](4e4,5.5,"Int16",color="C0",rotation=65)
+ax1[:text](30,5.7,"Q6.10",color="#00E0E0",rotation=65)
 
 
 # ax11 = ax1[:twiny]()
@@ -127,11 +134,11 @@ ax1[:set_xticks](xtik)
 bins[1] = 1e-16
 bins[end-1] = 1e16
 
-ax2[:plot](bins[1:end-1],H100/1e4,"C8",label=L"s=10^2",drawstyle="steps-post")
+ax2[:plot](bins[1:end-1],H100/1e4,"0.7",label=L"s=10^2",drawstyle="steps-post")
 #ax2[:plot](bins[1:end-1],H10/1e4,"C7",label=L"s=10^1",drawstyle="steps-post")
-ax2[:plot](bins[1:end-1],H1/1e4,"C6",label=L"s=10^0",drawstyle="steps-post")
-#ax2[:plot](bins[1:end-1],H_10/1e4,"C4",label=L"s=10^{-1}",drawstyle="steps-post")
-ax2[:plot](bins[1:end-1],H_100/1e4,"C5",label=L"s=10^{-2}",drawstyle="steps-post")
+ax2[:plot](bins[1:end-1],H1/1e4,"0.45",label=L"s=10^0",drawstyle="steps-post")
+ax2[:plot](bins[1:end-1],H_10/1e4,"0.0",label=L"s=10^{-1}",drawstyle="steps-post")
+#ax2[:plot](bins[1:end-1],H_100/1e4,"C5",label=L"s=10^{-2}",drawstyle="steps-post")
 
 ax1[:set_title]("Decimal precision",loc="left")
 ax2[:set_title]("Numbers subject to rounding errors in rescaled L63",loc="left")
@@ -143,5 +150,7 @@ ax2[:set_title]("b",loc="right",fontweight="bold")
 ax2[:legend](loc=1,fontsize=9)
 
 tight_layout()
-savefig("/home/kloewer/julia/lorenz_posit/dec_accuracy/figs/dec_acc_hist2.png",dpi=300)
+savefig("/home/kloewer/phd/lorenz_posit/dec_accuracy/figs/dec_acc_hist2.png",dpi=300)
+#savefig("/home/kloewer/julia/lorenz_posit/dec_accuracy/figs/dec_acc_simple.png",dpi=300)
+#savefig("/home/kloewer/julia/lorenz_posit/dec_accuracy/figs/dec_acc_bfloat16.png",dpi=300)
 close(fig)
