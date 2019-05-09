@@ -1,46 +1,46 @@
-using SigmoidNumbers
+using SoftPosit
 using PyPlot
+using StatsBase
 
 N = 100000
 x = 3*randn(Float64,N)
 cfloat = fill(0,N)
-cposit0 = fill(0,N)
 cposit1 = fill(0,N)
 cposit2 = fill(0,N)
 l = 0:2^16-1
+#
+# function posit16_2int(x::Real,P16)
+#     return Int(parse(UInt16,bitstring(P16(x)),base=2))
+# end
+#
+# function float16_2int(x::Real)
+#     return Int(reinterpret(UInt16,Float16(x)))
+# end
 
-function posit16_2int(x::Real,P16)
-    return Int(parse(UInt16,bits(P16(x)),base=2))
-end
-
-function float16_2int(x::Real)
-    return Int(reinterpret(UInt16,Float16(x)))
+function real2int(x::Real,T::DataType)
+    return Int(reinterpret(UInt16,T(x)))
 end
 
 for i ∈ 1:N
-    cfloat[i] = float16_2int(x[i])
-    cposit0[i] = posit16_2int(x[i],Posit{16,0})
-    cposit1[i] = posit16_2int(x[i],Posit{16,1})
-    cposit2[i] = posit16_2int(x[i],Posit{16,2})
+    cfloat[i] = real2int(x[i],Float16)
+    cposit1[i] = real2int(x[i],Posit16)
+    #cposit2[i] = real2int(x[i],Posit16_2)
 end
 
 hfloat = fit(Histogram,cfloat,0:2^16)
-hposit0 = fit(Histogram,cposit0,0:2^16)
 hposit1 = fit(Histogram,cposit1,0:2^16)
-hposit2 = fit(Histogram,cposit2,0:2^16)
+# hposit2 = fit(Histogram,cposit2,0:2^16)
 
 wfloat = hfloat.weights
-wposit0 = hposit0.weights
 wposit1 = hposit1.weights
-wposit2 = hposit2.weights
+# wposit2 = hposit2.weights
 
 ## orientation ticks
 tik = [0,1,-1,4,-4,1/4,-1/4,Inf]
 
-otickf = [float16_2int(t) for t in tik]
-otick0 = [posit16_2int(t,Posit{16,0}) for t in tik]
-otick1 = [posit16_2int(t,Posit{16,1}) for t in tik]
-otick2 = [posit16_2int(t,Posit{16,2}) for t in tik]
+otickf = [real2int(t,Float16) for t in tik]
+otick1 = [real2int(t,Posit16) for t in tik]
+# otick2 = [real2int(t,Posit16_2) for t in tik]
 
 ## visualising nans
 nan_pos0 = Int(parse(UInt16,"0111110000000001",base=2))
