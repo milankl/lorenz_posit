@@ -8,12 +8,12 @@ using NCDatasets
 ##
 path = "/network/aopp/preds0/pred/data/Obs/Reanalysis/tas/6hr/tas_6hr_ERAInterim_1x1_201501-201512.nc"
 tas = Dataset(path)
-x = Float64.(tas["t2m"][:,2:end-1,:]).-273.15
+x = Float64.(tas["t2m"][:,2:end-1,:])
 
 ##
-path = "/network/aopp/preds0/pred/data/Obs/Reanalysis/tos/mon/tos_mon_ERAInterim_1x1_197901-201512.nc"
-tos = Dataset(path)
-x = tos["sst"][:,2:end-1,:]
+# path = "/network/aopp/preds0/pred/data/Obs/Reanalysis/tos/mon/tos_mon_ERAInterim_1x1_197901-201512.nc"
+# tos = Dataset(path)
+# x = tos["sst"][:,2:end-1,:]
 
 N = prod(size(x))
 #x = 3*randn(Float64,N)
@@ -35,7 +35,7 @@ end
 j = 0
 for i ∈ 1:N
     if ~ismissing(x[i])
-        y = x[i] - 273.15f0
+        y = x[i]
         global j += 1
         cfloat[j] = real2int(y,Float16)
         cbfloat[j] = real2int(Float32(y),BFloat16)
